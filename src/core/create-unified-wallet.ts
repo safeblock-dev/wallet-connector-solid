@@ -19,7 +19,7 @@ function defineConnector(wallet: UnifiedWalletMetadata) {
 }
 
 /**
- * Create unified wallet description object
+ * Create a unified wallet description object
  *
  * @param wallet unified wallet metadata
  * @param onUpdate fires when accounts or chain of connected accounts changes
