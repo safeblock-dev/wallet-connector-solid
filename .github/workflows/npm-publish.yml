@@ -21,6 +21,9 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
+      - name: Remove specs
+        run: rm -rf ./src/__specs__
+
       - name: Build
         run: tsc
 
@@ -90,7 +93,11 @@ jobs:
           echo "Updating package.json with version $VERSION"
           npm version --no-git-tag-version $VERSION
 
+      - name: Verify Login
+        run: npm whoami
+
       - name: Publish to NPM
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
