@@ -1,4 +1,3 @@
-import { SetStoreFunction } from "solid-js/store"
 import { BrowserProvider, JsonRpcSigner } from "ethers"
 import { UnifiedWallet } from "../../types/wallet"
 import cast from "../../cast"
@@ -25,7 +24,7 @@ type EthereumAccountDetails = {
 export default function detectEthereumAccounts(
   wallets: () => UnifiedWallet[],
   accounts: EthereumAccountDetails[],
-  setAccounts: SetStoreFunction<EthereumAccountDetails[]>
+  setAccounts: (update: EthereumAccountDetails[]) => any
 ) {
 
   const updateAccounts = async () => {

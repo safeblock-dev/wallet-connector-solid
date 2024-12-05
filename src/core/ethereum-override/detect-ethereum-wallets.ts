@@ -1,4 +1,3 @@
-import { SetStoreFunction } from "solid-js/store"
 import { BrowserProvider } from "ethers"
 import EthereumProvider from "@walletconnect/ethereum-provider"
 import bewareExceptions from "../../beware-exceptions"
@@ -16,7 +15,7 @@ const uuidRegex =
 export default function detectEthereumWallets(
   wcProjectId: string,
   walletsList: Record<string, UnifiedWallet>,
-  setWalletsList: SetStoreFunction<Record<string, UnifiedWallet>>,
+  setWalletsList: (key: string, update: UnifiedWallet) => any,
   onUpdate?: () => any,
   descriptors?: UnifiedWalletDescriptor[]) {
   // Process wallet descriptors if any

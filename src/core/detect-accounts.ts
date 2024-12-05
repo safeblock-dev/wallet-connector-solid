@@ -1,4 +1,3 @@
-import { SetStoreFunction } from "solid-js/store"
 import { UnifiedWallet } from "../types/wallet"
 import cast from "../cast"
 
@@ -13,7 +12,7 @@ export default function detectAccounts<P = any>(
   wallets: () => UnifiedWallet[],
   getAddress: (provider: P) => string | undefined | null | false,
   accounts: SimpleAccountDetails[],
-  setAccounts: SetStoreFunction<SimpleAccountDetails[]>
+  setAccounts: (update: SimpleAccountDetails[]) => any
 ) {
   let interval = setInterval(() => {
     const allConnectedAccounts: SimpleAccountDetails[] = []

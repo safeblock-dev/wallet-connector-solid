@@ -1,4 +1,3 @@
-import { SetStoreFunction } from "solid-js/store"
 import bewareExceptions from "../beware-exceptions"
 import { UnifiedWallet, UnifiedWalletDescriptor, WalletType } from "../types/wallet"
 import createUnifiedWallet from "./create-unified-wallet"
@@ -7,7 +6,7 @@ export default function detectWallets(
   descriptors: UnifiedWalletDescriptor[],
   type: WalletType,
   walletsList: Record<string, UnifiedWallet>,
-  setWalletsList: SetStoreFunction<Record<string, UnifiedWallet>>
+  setWalletsList: (key: string, update: UnifiedWallet) => any
 ) {
   // List of installed wallets
 

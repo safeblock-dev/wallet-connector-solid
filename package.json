@@ -1,5 +1,5 @@
 {
-  "name": "@safeblock/wallet-connector-solid",
+  "name": "@safeblock/wallet-connector",
   "version": "0.0.0",
   "description": "Custom omni-chain & omni-account wallet connector",
   "main": "dist/index.js",
@@ -40,7 +40,6 @@
     "@tonconnect/ui": "^2.0.9",
     "@walletconnect/ethereum-provider": "^2.17.0",
     "ethers": "^6.13.4",
-    "solid-js": "^1.9.3",
     "tronweb": "^6.0.0"
   }
 }
