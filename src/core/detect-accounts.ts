@@ -1,5 +1,4 @@
-import { onCleanup } from "solid-js"
-import { createStore } from "solid-js/store"
+import { SetStoreFunction } from "solid-js/store"
 import { UnifiedWallet } from "../types/wallet"
 import cast from "../cast"
 
@@ -10,9 +9,12 @@ interface SimpleAccountDetails {
   wallet: UnifiedWallet
 }
 
-export default function detectAccounts<P = any>(wallets: () => UnifiedWallet[], getAddress: (provider: P) => string | undefined | null | false) {
-  const [accounts, setAccounts] = createStore<SimpleAccountDetails[]>([])
-
+export default function detectAccounts<P = any>(
+  wallets: () => UnifiedWallet[],
+  getAddress: (provider: P) => string | undefined | null | false,
+  accounts: SimpleAccountDetails[],
+  setAccounts: SetStoreFunction<SimpleAccountDetails[]>
+) {
   let interval = setInterval(() => {
     const allConnectedAccounts: SimpleAccountDetails[] = []
 
@@ -30,12 +32,12 @@ export default function detectAccounts<P = any>(wallets: () => UnifiedWallet[], 
     setAccounts(allConnectedAccounts)
   }, 100)
 
-  onCleanup(() => clearInterval(interval))
-
   return {
     get list() {
       return accounts
     },
+
+    interval,
 
     // Get a reactive list of accounts connected with a specified wallet
     ofWallet(walletOrUUID: string | UnifiedWallet) {

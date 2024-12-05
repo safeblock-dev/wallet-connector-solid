@@ -48,7 +48,7 @@ export default function createUnifiedWallet(wallet: UnifiedWalletMetadata, onUpd
     },
 
     equalTo: walletOrUUID => typeof walletOrUUID === "string"
-      ? walletOrUUID === wallet.info.uuid
+      ? (walletOrUUID === wallet.info.uuid)
       : walletOrUUID.info.uuid === wallet.info.uuid
   }
 

@@ -1,6 +1,5 @@
-import { createStore } from "solid-js/store"
+import { SetStoreFunction } from "solid-js/store"
 import { BrowserProvider } from "ethers"
-import { createMemo } from "solid-js"
 import EthereumProvider from "@walletconnect/ethereum-provider"
 import bewareExceptions from "../../beware-exceptions"
 import { UnifiedWallet, UnifiedWalletDescriptor, WalletType } from "../../types/wallet"
@@ -14,10 +13,12 @@ const uuidRegex =
 /**
  * Detect all installed eip6963-compatible wallets
  */
-export default function detectEthereumWallets(wcProjectId: string, onUpdate?: () => any, descriptors?: UnifiedWalletDescriptor[]) {
-  // List of installed wallets
-  const [walletsList, setWalletsList] = createStore<Record<string, UnifiedWallet>>({})
-
+export default function detectEthereumWallets(
+  wcProjectId: string,
+  walletsList: Record<string, UnifiedWallet>,
+  setWalletsList: SetStoreFunction<Record<string, UnifiedWallet>>,
+  onUpdate?: () => any,
+  descriptors?: UnifiedWalletDescriptor[]) {
   // Process wallet descriptors if any
   // TODO: combine with detectWallets function (duplicate)
   descriptors?.forEach(descriptor => {
@@ -42,29 +43,28 @@ export default function detectEthereumWallets(wcProjectId: string, onUpdate?: ()
   })
 
   // Initialize WalletConnect provider
-  createMemo(() => {
-    bewareExceptions(() => EthereumProvider.init({
-      chains: [56],
-      showQrModal: true,
-      projectId: wcProjectId
-    }))?.then(provider => {
-      const unifiedWallet = createUnifiedWallet({
-        provider: new BrowserProvider(provider),
-        walletConnectProvider: provider,
-        info: {
-          name: "WalletConnect",
+  bewareExceptions(() => EthereumProvider.init({
+    chains: [ 56 ],
+    showQrModal: true,
+    projectId: wcProjectId
+  }))?.then(provider => {
+    if (provider.namespace in walletsList) return
+    const unifiedWallet = createUnifiedWallet({
+      provider: new BrowserProvider(provider),
+      walletConnectProvider: provider,
+      info: {
+        name: "WalletConnect",
 
-          icon: "https://github.com/safeblock-dev/wallet-connector-solid/blob/main/public/icons/walletconnect.png",
-          uuid: provider.namespace
-        },
-        supports: {
-          requestPermissions: false
-        },
-        type: WalletType.Ethereum
-      }, onUpdate)
+        icon: "https://github.com/safeblock-dev/wallet-connector-solid/blob/main/public/icons/walletconnect.png",
+        uuid: provider.namespace
+      },
+      supports: {
+        requestPermissions: false
+      },
+      type: WalletType.Ethereum
+    }, onUpdate)
 
-      setWalletsList(provider.namespace, unifiedWallet)
-    })
+    setWalletsList(provider.namespace, unifiedWallet)
   })
 
   // eip6963 announce provider event handler

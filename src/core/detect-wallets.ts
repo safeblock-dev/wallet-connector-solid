@@ -1,11 +1,15 @@
-import { createStore } from "solid-js/store"
+import { SetStoreFunction } from "solid-js/store"
 import bewareExceptions from "../beware-exceptions"
 import { UnifiedWallet, UnifiedWalletDescriptor, WalletType } from "../types/wallet"
 import createUnifiedWallet from "./create-unified-wallet"
 
-export default function detectWallets(descriptors: UnifiedWalletDescriptor[], type: WalletType) {
+export default function detectWallets(
+  descriptors: UnifiedWalletDescriptor[],
+  type: WalletType,
+  walletsList: Record<string, UnifiedWallet>,
+  setWalletsList: SetStoreFunction<Record<string, UnifiedWallet>>
+) {
   // List of installed wallets
-  const [walletsList, setWalletsList] = createStore<Record<string, UnifiedWallet>>({})
 
   descriptors.forEach(descriptor => {
     bewareExceptions(() => {

@@ -1,6 +1,5 @@
-import { createStore } from "solid-js/store"
+import { SetStoreFunction } from "solid-js/store"
 import { BrowserProvider, JsonRpcSigner } from "ethers"
-import { createEffect } from "solid-js"
 import { UnifiedWallet } from "../../types/wallet"
 import cast from "../../cast"
 
@@ -20,9 +19,14 @@ type EthereumAccountDetails = {
  * Detect connected EVM accounts
  *
  * @param wallets list of wallets to detect
+ * @param accounts
+ * @param setAccounts
  */
-export default function detectEthereumAccounts(wallets: () => UnifiedWallet[]) {
-  const [accounts, setAccounts] = createStore<EthereumAccountDetails[]>([])
+export default function detectEthereumAccounts(
+  wallets: () => UnifiedWallet[],
+  accounts: EthereumAccountDetails[],
+  setAccounts: SetStoreFunction<EthereumAccountDetails[]>
+) {
 
   const updateAccounts = async () => {
     let list = wallets()
@@ -45,8 +49,6 @@ export default function detectEthereumAccounts(wallets: () => UnifiedWallet[]) {
 
     setAccounts(allConnectedAddresses)
   }
-
-  createEffect(() => updateAccounts())
 
   return {
     /** Get a reactive list of all connected accounts */
