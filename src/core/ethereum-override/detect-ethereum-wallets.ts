@@ -54,7 +54,7 @@ export default function detectEthereumWallets(
       info: {
         name: "WalletConnect",
 
-        icon: "https://github.com/safeblock-dev/wallet-connector-solid/blob/main/public/icons/walletconnect.png",
+        icon: "https://raw.githubusercontent.com/safeblock-dev/wallet-connector-solid/blob/main/public/icons/walletconnect.png",
         uuid: provider.namespace
       },
       supports: {
