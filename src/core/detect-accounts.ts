@@ -2,7 +2,7 @@ import { UnifiedWallet } from "../types/wallet"
 import cast from "../cast"
 
 
-interface SimpleAccountDetails {
+export interface AccountDetails {
   address: string
 
   wallet: UnifiedWallet
@@ -11,11 +11,11 @@ interface SimpleAccountDetails {
 export default function detectAccounts<P = any>(
   wallets: () => UnifiedWallet[],
   getAddress: (provider: P) => string | undefined | null | false,
-  accounts: SimpleAccountDetails[],
-  setAccounts: (update: SimpleAccountDetails[]) => any
+  accounts: AccountDetails[],
+  setAccounts: (update: AccountDetails[]) => any
 ) {
   let interval = setInterval(() => {
-    const allConnectedAccounts: SimpleAccountDetails[] = []
+    const allConnectedAccounts: AccountDetails[] = []
 
     wallets().forEach(wallet => {
       const address = getAddress(cast<any>(wallet.provider)) || null

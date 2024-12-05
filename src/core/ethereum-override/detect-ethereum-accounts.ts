@@ -3,7 +3,7 @@ import { UnifiedWallet } from "../../types/wallet"
 import cast from "../../cast"
 
 /** Connected EVM account details */
-type EthereumAccountDetails = {
+export type EthereumAccountDetails = {
   /** Account signer instance */
   signer: JsonRpcSigner
 
