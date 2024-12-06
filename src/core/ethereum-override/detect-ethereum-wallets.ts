@@ -35,7 +35,7 @@ export default function detectEthereumWallets(
         },
         supports: {
           requestPermissions: descriptor.supports?.requestPermissions || false,
-          disconnectMethod: descriptor.supports?.disconnectMethod || false,
+          disconnectMethod: descriptor.supports?.disconnectMethod || false
         },
         type: WalletType.Ethereum
       }, onUpdate))
@@ -44,7 +44,7 @@ export default function detectEthereumWallets(
 
   // Initialize WalletConnect provider
   bewareExceptions(() => EthereumProvider.init({
-    chains: [ 56 ],
+    chains: [56],
     showQrModal: true,
     projectId: wcProjectId
   }))?.then(provider => {
@@ -62,7 +62,7 @@ export default function detectEthereumWallets(
         disconnectMethod: true
       },
       type: WalletType.Ethereum
-    }, onUpdate)
+    }, onUpdate, () => provider.disconnect())
 
     setWalletsList(provider.namespace, unifiedWallet)
   })

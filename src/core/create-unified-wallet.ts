@@ -23,8 +23,9 @@ function defineConnector(wallet: UnifiedWalletMetadata) {
  *
  * @param wallet unified wallet metadata
  * @param onUpdate fires when accounts or chain of connected accounts changes
+ * @param onDisconnect
  */
-export default function createUnifiedWallet(wallet: UnifiedWalletMetadata, onUpdate?: () => void): UnifiedWallet {
+export default function createUnifiedWallet(wallet: UnifiedWalletMetadata, onUpdate?: () => void, onDisconnect?: () => Promise<void>): UnifiedWallet {
   if (unifiedWallets.has(wallet.info.uuid)) return unifiedWallets.get(wallet.info.uuid)!
 
   const connector = defineConnector(wallet)
@@ -42,6 +43,8 @@ export default function createUnifiedWallet(wallet: UnifiedWalletMetadata, onUpd
     },
 
     disconnect: async () => {
+      if (onDisconnect) return onDisconnect()
+
       if (wallet.type !== WalletType.Ton) return
 
       await cast<TonConnectUI>(wallet.provider).disconnect()
