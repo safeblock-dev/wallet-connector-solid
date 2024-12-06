@@ -59,7 +59,7 @@ export default function detectEthereumWallets(
       },
       supports: {
         requestPermissions: false,
-        disconnectMethod: false
+        disconnectMethod: true
       },
       type: WalletType.Ethereum
     }, onUpdate)
