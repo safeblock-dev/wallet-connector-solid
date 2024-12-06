@@ -23,7 +23,8 @@ export default function detectWallets(
           uuid: descriptor.uuid
         },
         supports: {
-          requestPermissions: descriptor.supports?.requestPermissions || false
+          requestPermissions: descriptor.supports?.requestPermissions || false,
+          disconnectMethod: descriptor.supports?.disconnectMethod || false
         },
         type
       }))

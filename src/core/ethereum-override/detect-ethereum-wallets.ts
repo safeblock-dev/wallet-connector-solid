@@ -34,7 +34,8 @@ export default function detectEthereumWallets(
           uuid: descriptor.uuid
         },
         supports: {
-          requestPermissions: descriptor.supports?.requestPermissions || false
+          requestPermissions: descriptor.supports?.requestPermissions || false,
+          disconnectMethod: descriptor.supports?.disconnectMethod || false,
         },
         type: WalletType.Ethereum
       }, onUpdate))
@@ -53,12 +54,12 @@ export default function detectEthereumWallets(
       walletConnectProvider: provider,
       info: {
         name: "WalletConnect",
-
         icon: "https://raw.githubusercontent.com/safeblock-dev/wallet-connector-solid/refs/heads/main/public/icons/walletconnect.png",
         uuid: provider.namespace
       },
       supports: {
-        requestPermissions: false
+        requestPermissions: false,
+        disconnectMethod: false
       },
       type: WalletType.Ethereum
     }, onUpdate)
@@ -85,7 +86,8 @@ export default function detectEthereumWallets(
       info,
       type: WalletType.Ethereum,
       supports: {
-        requestPermissions: info.rdns.startsWith("io.metamask")
+        requestPermissions: info.rdns.startsWith("io.metamask"),
+        disconnectMethod: info.rdns.startsWith("io.metamask")
       }
     }, onUpdate)
 

@@ -14,7 +14,8 @@ describe("Utils / Core / CreateUnifiedWallet", () => {
       name: "WalletA"
     },
     supports: {
-      requestPermissions: false
+      requestPermissions: false,
+      disconnectMethod: false
     }
   }
 

@@ -24,6 +24,9 @@ export type UnifiedWalletInfo = {
 export type UnifiedWalletMethodsSupportInfo = {
   /** Is wallet accept requestPermissions request */
   requestPermissions: boolean
+
+  /** Is wallet supports account disconnection */
+  disconnectMethod: boolean
 }
 
 /**
