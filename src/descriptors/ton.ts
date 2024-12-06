@@ -8,6 +8,6 @@ export const tonWalletDescriptors: UnifiedWalletDescriptor[] = [
       manifestUrl: "https://github.com/safeblock-dev/wallet-connector-solid/blob/main/public/ton-connect.manifest.json"
     }),
     name: "TON Connect",
-    icon: "https://github.com/safeblock-dev/wallet-connector-solid/blob/main/public/icons/tonconnect.png"
+    icon: "https://raw.githubusercontent.com/safeblock-dev/wallet-connector-solid/refs/heads/main/public/icons/tonconnect.png"
   }
 ]
