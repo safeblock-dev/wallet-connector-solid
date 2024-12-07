@@ -24,7 +24,7 @@ export type EthereumAccountDetails = {
 export default function detectEthereumAccounts(
   wallets: () => UnifiedWallet[],
   accounts: EthereumAccountDetails[],
-  setAccounts: (update: EthereumAccountDetails[]) => any
+  setAccounts: (update: (current: EthereumAccountDetails[]) => EthereumAccountDetails[]) => any
 ) {
 
   const updateAccounts = async () => {
@@ -47,7 +47,14 @@ export default function detectEthereumAccounts(
       )))
     }
 
-    setAccounts(allConnectedAddresses)
+    setAccounts(current => {
+      if (
+        current.length === allConnectedAddresses.length &&
+        current.every((c, i) => c.address === allConnectedAddresses[i].address && c.wallet.info.uuid === allConnectedAddresses[i].wallet.info.uuid)
+      ) return current
+
+      return allConnectedAddresses
+    })
   }
 
   return {
