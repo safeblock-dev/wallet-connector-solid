@@ -1,7 +1,8 @@
 import { BrowserProvider } from "ethers"
-import EthereumProvider from "@walletconnect/ethereum-provider"
+import EthereumProvider, { EthereumProviderOptions } from "@walletconnect/ethereum-provider"
 import bewareExceptions from "../../beware-exceptions"
 import { UnifiedWallet, UnifiedWalletDescriptor, WalletType } from "../../types/wallet"
+import walletConfig from "../../wallet-config"
 import createUnifiedWallet from "../create-unified-wallet"
 import { Eip6963AnnounceEvent } from "../../types/eip6963"
 
@@ -17,7 +18,9 @@ export default function detectEthereumWallets(
   walletsList: Record<string, UnifiedWallet>,
   setWalletsList: (key: string, update: UnifiedWallet) => any,
   onUpdate?: () => any,
-  descriptors?: UnifiedWalletDescriptor[]) {
+  descriptors?: UnifiedWalletDescriptor[],
+  ethereumProviderOptions?: EthereumProviderOptions
+) {
   // Process wallet descriptors if any
   // TODO: combine with detectWallets function (duplicate)
   descriptors?.forEach(descriptor => {
@@ -43,10 +46,15 @@ export default function detectEthereumWallets(
   })
 
   // Initialize WalletConnect provider
-  bewareExceptions(() => EthereumProvider.init({
+  bewareExceptions(() => EthereumProvider.init(ethereumProviderOptions ?? {
     chains: [56],
     showQrModal: true,
-    projectId: wcProjectId
+    projectId: wcProjectId,
+    qrModalOptions: {
+      enableExplorer: Boolean(navigator.maxTouchPoints || "ontouchstart" in document.documentElement) ?? false,
+      explorerExcludedWalletIds: "ALL",
+      explorerRecommendedWalletIds: walletConfig.map(w => w.id)
+    }
   }))?.then(provider => {
     if (provider.namespace in walletsList) return
     const unifiedWallet = createUnifiedWallet({
