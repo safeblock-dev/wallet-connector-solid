@@ -18,7 +18,7 @@ export default function detectAccounts<P = any>(
     const allConnectedAccounts: AccountDetails[] = []
 
     wallets().forEach(wallet => {
-      const address = getAddress(cast<any>(wallet.provider)) || null
+      const address = getAddress(cast<any>(wallet.provider())) || null
 
       if (!address) return
 

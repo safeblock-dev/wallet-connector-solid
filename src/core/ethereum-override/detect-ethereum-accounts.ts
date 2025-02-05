@@ -38,9 +38,9 @@ export default function detectEthereumAccounts(
         if (walletDetails.walletConnectProvider.accounts.length < 1) continue
       }
 
-      if (!(await cast<BrowserProvider>(walletDetails.provider)._detectNetwork().catch(() => false))) continue
+      if (!(await cast<BrowserProvider>(walletDetails.provider())._detectNetwork().catch(() => false))) continue
       // Get all signers of a specific wallet
-      const signers = await cast<BrowserProvider>(walletDetails.provider).listAccounts()
+      const signers = await cast<BrowserProvider>(walletDetails.provider()).listAccounts()
 
       allConnectedAddresses.push(...signers.map(signer => (
         { signer, address: signer.address, wallet: walletDetails }

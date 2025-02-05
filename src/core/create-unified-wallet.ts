@@ -39,7 +39,7 @@ export default function createUnifiedWallet(wallet: UnifiedWalletMetadata, onUpd
     ...wallet,
 
     connect: () => {
-      return connector(wallet.walletConnectProvider ?? wallet.provider as any)
+      return connector(wallet.walletConnectProvider ?? wallet.provider() as any)
     },
 
     disconnect: async () => {
@@ -47,7 +47,7 @@ export default function createUnifiedWallet(wallet: UnifiedWalletMetadata, onUpd
 
       if (wallet.type !== WalletType.Ton) return
 
-      await cast<TonConnectUI>(wallet.provider).disconnect()
+      await cast<TonConnectUI>(wallet.provider()).disconnect()
     },
 
     equalTo: walletOrUUID => typeof walletOrUUID === "string"

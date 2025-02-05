@@ -7,7 +7,7 @@ describe("Utils / Core / CreateUnifiedWallet", () => {
 
   const mockData: UnifiedWalletMetadata = {
     type: WalletType.Tron,
-    provider: mockProviderA,
+    provider: () => mockProviderA,
     info: {
       uuid: "1",
       icon: "",
@@ -32,6 +32,6 @@ describe("Utils / Core / CreateUnifiedWallet", () => {
   })
 
   it("should return previously created wallet from cache", () => {
-    expect(unifiedWalletB.provider).toEqual(mockProviderA)
+    expect(unifiedWalletB.provider()).toEqual(mockProviderA)
   })
 })
