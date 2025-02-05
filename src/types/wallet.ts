@@ -34,7 +34,7 @@ export type UnifiedWalletMethodsSupportInfo = {
  */
 export type UnifiedWalletMetadata = {
   /** Wallet provider */
-  provider: BrowserProvider | TronWeb | TonConnectUI
+  provider: () => (BrowserProvider | TronWeb | TonConnectUI)
 
   /**
    * Original wallet provider

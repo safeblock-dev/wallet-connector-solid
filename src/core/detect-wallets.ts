@@ -16,7 +16,7 @@ export default function detectWallets(
 
       setWalletsList(descriptor.uuid, createUnifiedWallet({
         originalProvider: provider,
-        provider: provider,
+        provider: () => provider,
         info: {
           name: descriptor.name,
           icon: descriptor.icon,
