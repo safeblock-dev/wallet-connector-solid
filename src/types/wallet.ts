@@ -1,7 +1,5 @@
 import { BrowserProvider, Eip1193Provider } from "ethers"
 import EthereumProvider from "@walletconnect/ethereum-provider"
-import { TronWeb } from "tronweb"
-import { TonConnectUI } from "@tonconnect/ui"
 
 
 export enum WalletType {
@@ -34,7 +32,7 @@ export type UnifiedWalletMethodsSupportInfo = {
  */
 export type UnifiedWalletMetadata = {
   /** Wallet provider */
-  provider: () => (BrowserProvider | TronWeb | TonConnectUI)
+  provider: () => BrowserProvider
 
   /**
    * Original wallet provider
@@ -80,7 +78,7 @@ export type UnifiedWalletDescriptor = {
   name: string
 
   /** Current wallet provider reference */
-  provider: (runtime: Record<any, any>) => TronWeb | Eip1193Provider | TonConnectUI
+  provider: (runtime: Record<any, any>) => Eip1193Provider
 
   /** Wallet icon */
   icon: string

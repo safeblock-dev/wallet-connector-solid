@@ -1,9 +1,5 @@
-import { TonConnectUI } from "@tonconnect/ui"
-import cast from "../cast"
 import connectInpageEthereum from "../connectors/ethereum"
 import connectWalletconnect from "../connectors/ethereum.walletconnect"
-import connectTon from "../connectors/ton"
-import connectInpageTron from "../connectors/tron"
 import { UnifiedWallet, UnifiedWalletMetadata, WalletType } from "../types/wallet"
 
 const unifiedWallets = new Map<string, UnifiedWallet>()
@@ -19,9 +15,9 @@ function defineConnector(wallet: UnifiedWalletMetadata) {
   if (wallet.walletConnectProvider) return connectWalletconnect
 
   return {
-    [WalletType.Ton]: connectTon,
+    [WalletType.Ton]: connectInpageEthereum,
     [WalletType.Ethereum]: connectInpageEthereum,
-    [WalletType.Tron]: connectInpageTron
+    [WalletType.Tron]: connectInpageEthereum
   }[wallet.type]
 }
 
@@ -55,9 +51,9 @@ export default function createUnifiedWallet(options: UnifiedWalletCreationOption
     disconnect: async () => {
       if (onDisconnect) return onDisconnect()
 
-      if (wallet.type !== WalletType.Ton) return
-
-      await cast<TonConnectUI>(wallet.provider()).disconnect()
+      //if (wallet.type !== WalletType.Ton) return
+      //
+      //await cast<TonConnectUI>(wallet.provider()).disconnect()
     },
 
     equalTo: walletOrUUID => typeof walletOrUUID === "string"
