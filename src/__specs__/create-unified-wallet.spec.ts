@@ -19,10 +19,12 @@ describe("Utils / Core / CreateUnifiedWallet", () => {
     }
   }
 
-  const unifiedWalletA = createUnifiedWallet(mockData)
+  const unifiedWalletA = createUnifiedWallet({ wallet: mockData })
   const unifiedWalletB = createUnifiedWallet({
-    ...mockData,
-    provider: mockProviderB
+    wallet: {
+      ...mockData,
+      provider: mockProviderB
+    }
   })
 
   it("should return correct UnifiedWallet description object", () => {
