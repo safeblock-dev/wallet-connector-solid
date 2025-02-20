@@ -1,26 +1,30 @@
-import { BrowserProvider } from "ethers"
 import EthereumProvider, { EthereumProviderOptions } from "@walletconnect/ethereum-provider"
+import { BrowserProvider } from "ethers"
 import bewareExceptions from "../../beware-exceptions"
+import { Eip6963AnnounceEvent } from "../../types/eip6963"
 import { UnifiedWallet, UnifiedWalletDescriptor, WalletType } from "../../types/wallet"
 import walletConfig from "../../wallet-config"
 import createUnifiedWallet from "../create-unified-wallet"
-import { Eip6963AnnounceEvent } from "../../types/eip6963"
 
 /** UUID verification regular expression */
 const uuidRegex =
   /^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[a-f0-9]{4}-[a-f0-9]{12}$|^0{8}-0{4}-0{4}-0{4}-0{12}$/u
 
+interface DetectEthereumWalletsOptions {
+  wcProjectId: string
+  walletsList: Record<string, UnifiedWallet>
+  setWalletsList: (key: string, update: UnifiedWallet) => any
+  onUpdate?: () => any
+  descriptors?: UnifiedWalletDescriptor[]
+  ethereumProviderOptions?: EthereumProviderOptions
+  ignoreListRef?: Set<string>
+}
+
 /**
  * Detect all installed eip6963-compatible wallets
  */
-export default function detectEthereumWallets(
-  wcProjectId: string,
-  walletsList: Record<string, UnifiedWallet>,
-  setWalletsList: (key: string, update: UnifiedWallet) => any,
-  onUpdate?: () => any,
-  descriptors?: UnifiedWalletDescriptor[],
-  ethereumProviderOptions?: EthereumProviderOptions
-) {
+export default function detectEthereumWallets(options: DetectEthereumWalletsOptions) {
+  const { wcProjectId, onUpdate, setWalletsList, walletsList, ethereumProviderOptions, descriptors } = options
   // Process wallet descriptors if any
   // TODO: combine with detectWallets function (duplicate)
   descriptors?.forEach(descriptor => {
@@ -29,19 +33,23 @@ export default function detectEthereumWallets(
       const provider = descriptor.provider(window) as any
 
       setWalletsList(descriptor.uuid, createUnifiedWallet({
-        originalProvider: provider,
-        provider: () => new BrowserProvider(provider),
-        info: {
-          name: descriptor.name,
-          icon: descriptor.icon,
-          uuid: descriptor.uuid
+        wallet: {
+          originalProvider: provider,
+          provider: () => new BrowserProvider(provider),
+          info: {
+            name: descriptor.name,
+            icon: descriptor.icon,
+            uuid: descriptor.uuid
+          },
+          supports: {
+            requestPermissions: descriptor.supports?.requestPermissions || false,
+            disconnectMethod: descriptor.supports?.disconnectMethod || false
+          },
+          type: WalletType.Ethereum
         },
-        supports: {
-          requestPermissions: descriptor.supports?.requestPermissions || false,
-          disconnectMethod: descriptor.supports?.disconnectMethod || false
-        },
-        type: WalletType.Ethereum
-      }, onUpdate))
+        ignoreListRef: options.ignoreListRef,
+        onUpdate
+      }))
     }, false)
   })
 
@@ -58,19 +66,24 @@ export default function detectEthereumWallets(
   }))?.then(provider => {
     if (provider.namespace in walletsList) return
     const unifiedWallet = createUnifiedWallet({
-      provider: () => new BrowserProvider(provider),
-      walletConnectProvider: provider,
-      info: {
-        name: "WalletConnect",
-        icon: "https://raw.githubusercontent.com/safeblock-dev/wallet-connector-solid/refs/heads/main/public/icons/walletconnect.png",
-        uuid: provider.namespace
+      wallet: {
+        provider: () => new BrowserProvider(provider),
+        walletConnectProvider: provider,
+        info: {
+          name: "WalletConnect",
+          icon: "https://raw.githubusercontent.com/safeblock-dev/wallet-connector-solid/refs/heads/main/public/icons/walletconnect.png",
+          uuid: provider.namespace
+        },
+        supports: {
+          requestPermissions: false,
+          disconnectMethod: true
+        },
+        type: WalletType.Ethereum
       },
-      supports: {
-        requestPermissions: false,
-        disconnectMethod: true
-      },
-      type: WalletType.Ethereum
-    }, onUpdate, () => provider.disconnect())
+      ignoreListRef: options.ignoreListRef,
+      onUpdate,
+      onDisconnect: () => provider.disconnect()
+    })
 
     setWalletsList(provider.namespace, unifiedWallet)
   })
@@ -86,15 +99,19 @@ export default function detectEthereumWallets(
     if (!uuid || !info || !uuidRegex.test(uuid)) return
 
     const unifiedWallet = createUnifiedWallet({
-      provider: () => new BrowserProvider(provider),
-      originalProvider: provider,
-      info,
-      type: WalletType.Ethereum,
-      supports: {
-        requestPermissions: info.rdns.startsWith("io.metamask"),
-        disconnectMethod: info.rdns.startsWith("io.metamask")
-      }
-    }, onUpdate)
+      wallet: {
+        provider: () => new BrowserProvider(provider),
+        originalProvider: provider,
+        info,
+        type: WalletType.Ethereum,
+        supports: {
+          requestPermissions: info.rdns.startsWith("io.metamask"),
+          disconnectMethod: info.rdns.startsWith("io.metamask")
+        }
+      },
+      ignoreListRef: options.ignoreListRef,
+      onUpdate
+    })
 
     setWalletsList(uuid, unifiedWallet)
   }

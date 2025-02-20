@@ -1,12 +1,19 @@
 import { TonConnectUI } from "@tonconnect/ui"
-import { UnifiedWallet, UnifiedWalletMetadata, WalletType } from "../types/wallet"
+import cast from "../cast"
+import connectInpageEthereum from "../connectors/ethereum"
 import connectWalletconnect from "../connectors/ethereum.walletconnect"
 import connectTon from "../connectors/ton"
-import connectInpageEthereum from "../connectors/ethereum"
 import connectInpageTron from "../connectors/tron"
-import cast from "../cast"
+import { UnifiedWallet, UnifiedWalletMetadata, WalletType } from "../types/wallet"
 
 const unifiedWallets = new Map<string, UnifiedWallet>()
+
+interface UnifiedWalletCreationOptions {
+  wallet: UnifiedWalletMetadata
+  onUpdate?: () => void
+  onDisconnect?: () => Promise<void>
+  ignoreListRef?: Set<string>
+}
 
 function defineConnector(wallet: UnifiedWalletMetadata) {
   if (wallet.walletConnectProvider) return connectWalletconnect
@@ -21,11 +28,11 @@ function defineConnector(wallet: UnifiedWalletMetadata) {
 /**
  * Create a unified wallet description object
  *
- * @param wallet unified wallet metadata
- * @param onUpdate fires when accounts or chain of connected accounts changes
- * @param onDisconnect
+ * @param options unified wallet creation options
  */
-export default function createUnifiedWallet(wallet: UnifiedWalletMetadata, onUpdate?: () => void, onDisconnect?: () => Promise<void>): UnifiedWallet {
+export default function createUnifiedWallet(options: UnifiedWalletCreationOptions): UnifiedWallet {
+  const { wallet, onDisconnect, onUpdate, ignoreListRef } = options
+
   if (unifiedWallets.has(wallet.info.uuid)) return unifiedWallets.get(wallet.info.uuid)!
 
   const connector = defineConnector(wallet)
@@ -38,8 +45,11 @@ export default function createUnifiedWallet(wallet: UnifiedWalletMetadata, onUpd
   const unifiedWallet: UnifiedWallet = {
     ...wallet,
 
-    connect: () => {
-      return connector(wallet.walletConnectProvider ?? wallet.provider() as any)
+    connect: async () => {
+      const result = await connector(wallet.walletConnectProvider ?? wallet.provider() as any)
+      if (result) ignoreListRef?.delete(wallet.info.uuid)
+
+      return result
     },
 
     disconnect: async () => {

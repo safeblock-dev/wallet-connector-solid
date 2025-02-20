@@ -2,12 +2,16 @@ import bewareExceptions from "../beware-exceptions"
 import { UnifiedWallet, UnifiedWalletDescriptor, WalletType } from "../types/wallet"
 import createUnifiedWallet from "./create-unified-wallet"
 
-export default function detectWallets(
-  descriptors: UnifiedWalletDescriptor[],
-  type: WalletType,
-  walletsList: Record<string, UnifiedWallet>,
+interface DetectWalletOptions {
+  descriptors: UnifiedWalletDescriptor[]
+  type: WalletType
+  walletsList: Record<string, UnifiedWallet>
   setWalletsList: (key: string, update: UnifiedWallet) => any
-) {
+  ignoreListRef?: Set<string>
+}
+
+export default function detectWallets(options: DetectWalletOptions) {
+  const { ignoreListRef, setWalletsList, walletsList, descriptors, type } = options
   // List of installed wallets
 
   descriptors.forEach(descriptor => {
@@ -15,18 +19,21 @@ export default function detectWallets(
       const provider = descriptor.provider(window) as any
 
       setWalletsList(descriptor.uuid, createUnifiedWallet({
-        originalProvider: provider,
-        provider: () => provider,
-        info: {
-          name: descriptor.name,
-          icon: descriptor.icon,
-          uuid: descriptor.uuid
+        wallet: {
+          originalProvider: provider,
+          provider: () => provider,
+          info: {
+            name: descriptor.name,
+            icon: descriptor.icon,
+            uuid: descriptor.uuid
+          },
+          supports: {
+            requestPermissions: descriptor.supports?.requestPermissions || false,
+            disconnectMethod: descriptor.supports?.disconnectMethod || false
+          },
+          type
         },
-        supports: {
-          requestPermissions: descriptor.supports?.requestPermissions || false,
-          disconnectMethod: descriptor.supports?.disconnectMethod || false
-        },
-        type
+        ignoreListRef
       }))
     }, false)
   })

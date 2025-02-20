@@ -1,6 +1,6 @@
 import { BrowserProvider, JsonRpcSigner } from "ethers"
-import { UnifiedWallet } from "../../types/wallet"
 import cast from "../../cast"
+import { UnifiedWallet } from "../../types/wallet"
 
 /** Connected EVM account details */
 export type EthereumAccountDetails = {
@@ -14,21 +14,23 @@ export type EthereumAccountDetails = {
   wallet: UnifiedWallet
 }
 
+interface DetectEthereumAccountsOptions {
+  wallets: UnifiedWallet[]
+  accounts: EthereumAccountDetails[]
+  setAccounts: (update: (current: EthereumAccountDetails[]) => EthereumAccountDetails[]) => any
+  ignoreListRef?: Set<string>
+}
+
 /**
  * Detect connected EVM accounts
  *
- * @param wallets list of wallets to detect
- * @param accounts
- * @param setAccounts
+ * @param options detector options
  */
-export default function detectEthereumAccounts(
-  wallets: () => UnifiedWallet[],
-  accounts: EthereumAccountDetails[],
-  setAccounts: (update: (current: EthereumAccountDetails[]) => EthereumAccountDetails[]) => any
-) {
+export default function detectEthereumAccounts(options: DetectEthereumAccountsOptions) {
+  const { ignoreListRef, accounts, setAccounts, wallets } = options
 
   const updateAccounts = async () => {
-    let list = wallets()
+    let list = [...wallets]
 
     const allConnectedAddresses: EthereumAccountDetails[] = []
 
@@ -38,10 +40,15 @@ export default function detectEthereumAccounts(
         if (walletDetails.walletConnectProvider.accounts.length < 1) continue
       }
 
-      if (!(await cast<BrowserProvider>(walletDetails.provider())._detectNetwork().catch(() => false))) continue
-      // Get all signers of a specific wallet
-      const signers = await cast<BrowserProvider>(walletDetails.provider()).listAccounts()
+      if (ignoreListRef?.has(walletDetails.info.uuid)) continue
 
+      const netCheckResponse = await cast<BrowserProvider>(walletDetails.provider())._detectNetwork().catch(() => false)
+
+      if (netCheckResponse === false) ignoreListRef?.add(walletDetails.info.uuid)
+      if (!netCheckResponse) continue
+      // Get all signers of a specific wallet
+
+      const signers = await cast<BrowserProvider>(walletDetails.provider()).listAccounts()
       allConnectedAddresses.push(...signers.map(signer => (
         { signer, address: signer.address, wallet: walletDetails }
       )))
