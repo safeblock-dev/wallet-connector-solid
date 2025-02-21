@@ -41,11 +41,11 @@ export default function detectEthereumAccounts(options: DetectEthereumAccountsOp
         if (walletDetails.walletConnectProvider.accounts.length < 1) continue
       }
 
-      if (ignoreListRef?.has(walletDetails.info.uuid)) continue
+      if (ignoreListRef?.has(walletDetails.info.name)) continue
 
       const netCheckResponse = await cast<BrowserProvider>(walletDetails.provider())._detectNetwork().catch(() => false)
 
-      if (netCheckResponse === false) ignoreListRef?.add(walletDetails.info.uuid)
+      if (netCheckResponse === false) ignoreListRef?.add(walletDetails.info.name)
       if (!netCheckResponse) continue
       // Get all signers of a specific wallet
 
