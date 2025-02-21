@@ -1,4 +1,4 @@
-import { BrowserProvider, Eip1193Provider } from "ethers"
+import { BrowserProvider, Eip1193Provider, Network } from "ethers"
 import EthereumProvider from "@walletconnect/ethereum-provider"
 
 
@@ -32,7 +32,7 @@ export type UnifiedWalletMethodsSupportInfo = {
  */
 export type UnifiedWalletMetadata = {
   /** Wallet provider */
-  provider: () => BrowserProvider
+  provider: (network?: Network) => BrowserProvider
 
   /**
    * Original wallet provider

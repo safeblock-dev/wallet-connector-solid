@@ -1,7 +1,9 @@
+import { Network } from "ethers"
 import connectInpageEthereum from "../connectors/ethereum"
 import connectWalletconnect from "../connectors/ethereum.walletconnect"
 import { IgnoreListRef } from "../types/ignore-list"
 import { UnifiedWallet, UnifiedWalletMetadata, WalletType } from "../types/wallet"
+
 
 const unifiedWallets = new Map<string, UnifiedWallet>()
 
@@ -43,19 +45,11 @@ export default function createUnifiedWallet(options: UnifiedWalletCreationOption
     ...wallet,
 
     connect: async () => {
-      const result = await connector(wallet.walletConnectProvider ?? wallet.provider() as any)
-      if (result) ignoreListRef?.delete(wallet.info.name)
-      else ignoreListRef?.add(wallet.info.name)
-
-      return result
+      return await connector(wallet.walletConnectProvider ?? wallet.provider(Network.from(1)) as any)
     },
 
     disconnect: async () => {
       if (onDisconnect) return onDisconnect()
-
-      //if (wallet.type !== WalletType.Ton) return
-      //
-      //await cast<TonConnectUI>(wallet.provider()).disconnect()
     },
 
     equalTo: walletOrUUID => typeof walletOrUUID === "string"

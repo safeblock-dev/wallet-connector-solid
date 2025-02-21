@@ -1,4 +1,4 @@
-import { BrowserProvider, JsonRpcSigner } from "ethers"
+import { BrowserProvider, JsonRpcSigner, Network } from "ethers"
 import cast from "../../cast"
 import { IgnoreListRef } from "../../types/ignore-list"
 import { UnifiedWallet } from "../../types/wallet"
@@ -43,13 +43,13 @@ export default function detectEthereumAccounts(options: DetectEthereumAccountsOp
 
       if (ignoreListRef?.has(walletDetails.info.name)) continue
 
-      const netCheckResponse = await cast<BrowserProvider>(walletDetails.provider())._detectNetwork().catch(() => false)
+      const netCheckResponse = await cast<BrowserProvider>(walletDetails.provider(Network.from(1)))._detectNetwork().catch(() => false)
 
       if (netCheckResponse === false) ignoreListRef?.add(walletDetails.info.name)
       if (!netCheckResponse) continue
       // Get all signers of a specific wallet
 
-      const signers = await cast<BrowserProvider>(walletDetails.provider()).listAccounts()
+      const signers = await cast<BrowserProvider>(walletDetails.provider(Network.from(1))).listAccounts()
       allConnectedAddresses.push(...signers.map(signer => (
         { signer, address: signer.address, wallet: walletDetails }
       )))

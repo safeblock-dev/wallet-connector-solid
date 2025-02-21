@@ -36,7 +36,7 @@ export default function detectEthereumWallets(options: DetectEthereumWalletsOpti
       setWalletsList(descriptor.uuid, createUnifiedWallet({
         wallet: {
           originalProvider: provider,
-          provider: () => new BrowserProvider(provider),
+          provider: (network) => new BrowserProvider(provider, undefined, { staticNetwork: network }),
           info: {
             name: descriptor.name,
             icon: descriptor.icon,
@@ -68,7 +68,7 @@ export default function detectEthereumWallets(options: DetectEthereumWalletsOpti
     if (provider.namespace in walletsList) return
     const unifiedWallet = createUnifiedWallet({
       wallet: {
-        provider: () => new BrowserProvider(provider),
+        provider: (network) => new BrowserProvider(provider, undefined, { staticNetwork: network }),
         walletConnectProvider: provider,
         info: {
           name: "WalletConnect",
@@ -101,7 +101,7 @@ export default function detectEthereumWallets(options: DetectEthereumWalletsOpti
 
     const unifiedWallet = createUnifiedWallet({
       wallet: {
-        provider: () => new BrowserProvider(provider),
+        provider: (network) => new BrowserProvider(provider, undefined, { staticNetwork: network }),
         originalProvider: provider,
         info,
         type: WalletType.Ethereum,
