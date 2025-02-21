@@ -9,8 +9,11 @@ import bewareExceptions from "../beware-exceptions"
 export default async function connectInpageEthereum(provider: BrowserProvider) {
   // Skip if already connecting
 
+  const list = await provider.listAccounts().catch(() => null)
+  if (!list || !Array.isArray(list)) return false
+
   // Check if this wallet is already connected to the dApp
-  const accountConnected = (await provider.listAccounts()).length !== 0
+  const accountConnected = list.length !== 0
 
   // Call relative wallet method
   const result = await bewareExceptions(() => provider.send(
