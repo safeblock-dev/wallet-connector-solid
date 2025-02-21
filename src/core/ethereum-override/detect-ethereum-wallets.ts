@@ -2,6 +2,7 @@ import EthereumProvider, { EthereumProviderOptions } from "@walletconnect/ethere
 import { BrowserProvider } from "ethers"
 import bewareExceptions from "../../beware-exceptions"
 import { Eip6963AnnounceEvent } from "../../types/eip6963"
+import { IgnoreListRef } from "../../types/ignore-list"
 import { UnifiedWallet, UnifiedWalletDescriptor, WalletType } from "../../types/wallet"
 import walletConfig from "../../wallet-config"
 import createUnifiedWallet from "../create-unified-wallet"
@@ -17,7 +18,7 @@ interface DetectEthereumWalletsOptions {
   onUpdate?: () => any
   descriptors?: UnifiedWalletDescriptor[]
   ethereumProviderOptions?: EthereumProviderOptions
-  ignoreListRef?: Set<string>
+  ignoreListRef?: IgnoreListRef
 }
 
 /**

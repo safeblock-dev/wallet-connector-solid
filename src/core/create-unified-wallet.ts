@@ -1,5 +1,6 @@
 import connectInpageEthereum from "../connectors/ethereum"
 import connectWalletconnect from "../connectors/ethereum.walletconnect"
+import { IgnoreListRef } from "../types/ignore-list"
 import { UnifiedWallet, UnifiedWalletMetadata, WalletType } from "../types/wallet"
 
 const unifiedWallets = new Map<string, UnifiedWallet>()
@@ -8,7 +9,7 @@ interface UnifiedWalletCreationOptions {
   wallet: UnifiedWalletMetadata
   onUpdate?: () => void
   onDisconnect?: () => Promise<void>
-  ignoreListRef?: Set<string>
+  ignoreListRef?: IgnoreListRef
 }
 
 function defineConnector(wallet: UnifiedWalletMetadata) {

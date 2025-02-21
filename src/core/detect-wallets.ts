@@ -1,4 +1,5 @@
 import bewareExceptions from "../beware-exceptions"
+import { IgnoreListRef } from "../types/ignore-list"
 import { UnifiedWallet, UnifiedWalletDescriptor, WalletType } from "../types/wallet"
 import createUnifiedWallet from "./create-unified-wallet"
 
@@ -7,7 +8,7 @@ interface DetectWalletOptions {
   type: WalletType
   walletsList: Record<string, UnifiedWallet>
   setWalletsList: (key: string, update: UnifiedWallet) => any
-  ignoreListRef?: Set<string>
+  ignoreListRef?: IgnoreListRef
 }
 
 export default function detectWallets(options: DetectWalletOptions) {

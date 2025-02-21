@@ -1,5 +1,6 @@
 import { BrowserProvider, JsonRpcSigner } from "ethers"
 import cast from "../../cast"
+import { IgnoreListRef } from "../../types/ignore-list"
 import { UnifiedWallet } from "../../types/wallet"
 
 /** Connected EVM account details */
@@ -18,7 +19,7 @@ interface DetectEthereumAccountsOptions {
   wallets: UnifiedWallet[]
   accounts: EthereumAccountDetails[]
   setAccounts: (update: (current: EthereumAccountDetails[]) => EthereumAccountDetails[]) => any
-  ignoreListRef?: Set<string>
+  ignoreListRef?: IgnoreListRef
 }
 
 /**
