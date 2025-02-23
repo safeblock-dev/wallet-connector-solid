@@ -16,8 +16,8 @@ export type EthereumAccountDetails = {
 }
 
 interface DetectEthereumAccountsOptions {
-  wallets: UnifiedWallet[]
-  accounts: EthereumAccountDetails[]
+  wallets: () => UnifiedWallet[]
+  accounts: () => EthereumAccountDetails[]
   setAccounts: (update: (current: EthereumAccountDetails[]) => EthereumAccountDetails[]) => any
   ignoreListRef?: IgnoreListRef
 }
@@ -31,7 +31,7 @@ export default function detectEthereumAccounts(options: DetectEthereumAccountsOp
   const { ignoreListRef, accounts, setAccounts, wallets } = options
 
   const updateAccounts = async () => {
-    let list = [...wallets]
+    let list = [...wallets()]
 
     const allConnectedAddresses: EthereumAccountDetails[] = []
 
@@ -71,12 +71,12 @@ export default function detectEthereumAccounts(options: DetectEthereumAccountsOp
 
     /** List all detected accounts */
     get list() {
-      return accounts
+      return accounts()
     },
 
     /** Get a reactive list of accounts connected with a specified wallet */
     ofWallet(walletOrUUID: string | UnifiedWallet) {
-      return accounts.filter(account => account.wallet.equalTo(walletOrUUID))
+      return accounts().filter(account => account.wallet.equalTo(walletOrUUID))
     }
   }
 }

@@ -45,7 +45,11 @@ export default function createUnifiedWallet(options: UnifiedWalletCreationOption
     ...wallet,
 
     connect: async () => {
-      return await connector(wallet.walletConnectProvider ?? wallet.provider(Network.from(1)) as any)
+      const result = await connector(wallet.walletConnectProvider ?? wallet.provider(Network.from(1)) as any)
+
+      if (result) ignoreListRef?.delete(wallet.info.name)
+
+      return result
     },
 
     disconnect: async () => {

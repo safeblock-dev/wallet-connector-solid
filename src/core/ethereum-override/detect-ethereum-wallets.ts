@@ -56,7 +56,7 @@ export default function detectEthereumWallets(options: DetectEthereumWalletsOpti
 
   // Initialize WalletConnect provider
   bewareExceptions(() => EthereumProvider.init(ethereumProviderOptions ?? {
-    chains: [56],
+    chains: [1],
     showQrModal: true,
     projectId: wcProjectId,
     qrModalOptions: {
