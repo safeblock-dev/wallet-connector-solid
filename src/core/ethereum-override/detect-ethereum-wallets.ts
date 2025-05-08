@@ -91,30 +91,36 @@ export default function detectEthereumWallets(options: DetectEthereumWalletsOpti
 
   // eip6963 announce provider event handler
   const handleAnnounceEvent = (event: Eip6963AnnounceEvent) => {
-    const { detail: { info, provider } = {} } = event
+    if (!event.detail) return
 
-    // Retrieve wallet details from the event
-    const { uuid } = info ?? {}
+    try {
+      const { detail: { info, provider } = {} } = event
 
-    // Verify that the wallet has the correct UUID and all required fields
-    if (!uuid || !info || !uuidRegex.test(uuid)) return
+      // Retrieve wallet details from the event
+      const { uuid } = info ?? {}
 
-    const unifiedWallet = createUnifiedWallet({
-      wallet: {
-        provider: (network) => new BrowserProvider(provider, undefined, { staticNetwork: network }),
-        originalProvider: provider,
-        info,
-        type: WalletType.Ethereum,
-        supports: {
-          requestPermissions: info.rdns.startsWith("io.metamask"),
-          disconnectMethod: info.rdns.startsWith("io.metamask")
-        }
-      },
-      ignoreListRef: options.ignoreListRef,
-      onUpdate
-    })
+      // Verify that the wallet has the correct UUID and all required fields
+      if (!uuid || !info || !uuidRegex.test(uuid)) return
 
-    setWalletsList(uuid, unifiedWallet)
+      const unifiedWallet = createUnifiedWallet({
+        wallet: {
+          provider: (network) => new BrowserProvider(provider, undefined, { staticNetwork: network }),
+          originalProvider: provider,
+          info,
+          type: WalletType.Ethereum,
+          supports: {
+            requestPermissions: info.rdns.startsWith("io.metamask"),
+            disconnectMethod: info.rdns.startsWith("io.metamask")
+          }
+        },
+        ignoreListRef: options.ignoreListRef,
+        onUpdate
+      })
+
+      setWalletsList(uuid, unifiedWallet)
+    } catch {
+      return
+    }
   }
 
   // @ts-ignore
