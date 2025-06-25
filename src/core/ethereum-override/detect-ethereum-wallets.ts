@@ -18,6 +18,7 @@ interface DetectEthereumWalletsOptions {
   onUpdate?: () => any
   descriptors?: UnifiedWalletDescriptor[]
   ethereumProviderOptions?: EthereumProviderOptions
+  walletConnectChainId?: number
   ignoreListRef?: IgnoreListRef
 }
 
@@ -56,7 +57,7 @@ export default function detectEthereumWallets(options: DetectEthereumWalletsOpti
 
   // Initialize WalletConnect provider
   bewareExceptions(() => EthereumProvider.init(ethereumProviderOptions ?? {
-    chains: [1],
+    chains: [options.walletConnectChainId || 1],
     showQrModal: true,
     projectId: wcProjectId,
     qrModalOptions: {
