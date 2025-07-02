@@ -1,3 +1,4 @@
+import { ConnectOps } from "@walletconnect/ethereum-provider/dist/types/EthereumProvider"
 import { BrowserProvider, Eip1193Provider, Network } from "ethers"
 import EthereumProvider from "@walletconnect/ethereum-provider"
 
@@ -60,7 +61,7 @@ export type UnifiedWallet = UnifiedWalletMetadata & {
   equalTo(walletOrUUID: UnifiedWallet | string): boolean
 
   /** Connect account using the current wallet */
-  connect(): Promise<boolean>
+  connect(opts?: ConnectOps): Promise<boolean>
 
   /**
    * Disconnect current wallet
