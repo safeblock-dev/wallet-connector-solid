@@ -21,6 +21,10 @@ interface DetectEthereumWalletsOptions {
   ignoreListRef?: IgnoreListRef
 }
 
+type ArrayOneOrMore<T> = {
+  0: T;
+} & Array<T>;
+
 /**
  * Detect all installed eip6963-compatible wallets
  */
@@ -94,10 +98,11 @@ export default function detectEthereumWallets(options: DetectEthereumWalletsOpti
 
   return {
     unifiedWallets: () => Object.values(walletsList),
-    initializeWalletConnect: async (walletConnectChainId = 1) => {
+    initializeWalletConnect: async (chains: ArrayOneOrMore<number>, optionalChains?: number[]) => {
       // Initialize WalletConnect provider
       await bewareExceptions(() => EthereumProvider.init(ethereumProviderOptions ?? {
-        chains: [walletConnectChainId],
+        chains,
+        optionalChains,
         showQrModal: true,
         projectId: wcProjectId,
         qrModalOptions: {
