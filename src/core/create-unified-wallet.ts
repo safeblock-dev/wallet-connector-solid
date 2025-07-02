@@ -1,6 +1,7 @@
+import { ConnectOps } from "@walletconnect/ethereum-provider/dist/types/EthereumProvider"
 import { Network } from "ethers"
 import connectInpageEthereum from "../connectors/ethereum"
-import connectWalletconnect from "../connectors/ethereum.walletconnect"
+import connectWalletConnect from "../connectors/ethereum.walletconnect"
 import { IgnoreListRef } from "../types/ignore-list"
 import { UnifiedWallet, UnifiedWalletMetadata, WalletType } from "../types/wallet"
 
@@ -15,7 +16,7 @@ interface UnifiedWalletCreationOptions {
 }
 
 function defineConnector(wallet: UnifiedWalletMetadata) {
-  if (wallet.walletConnectProvider) return connectWalletconnect
+  if (wallet.walletConnectProvider) return connectWalletConnect
 
   return {
     [WalletType.Ton]: connectInpageEthereum,
@@ -44,8 +45,8 @@ export default function createUnifiedWallet(options: UnifiedWalletCreationOption
   const unifiedWallet: UnifiedWallet = {
     ...wallet,
 
-    connect: async () => {
-      const result = await connector(wallet.walletConnectProvider ?? wallet.provider(Network.from(1)) as any)
+    connect: async (opts?: ConnectOps) => {
+      const result = await connector(wallet.walletConnectProvider ?? wallet.provider(Network.from(1)) as any, opts)
 
       if (result) ignoreListRef?.delete(wallet.info.name)
 
