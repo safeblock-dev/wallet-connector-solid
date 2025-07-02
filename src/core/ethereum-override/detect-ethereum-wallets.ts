@@ -94,9 +94,9 @@ export default function detectEthereumWallets(options: DetectEthereumWalletsOpti
 
   return {
     unifiedWallets: () => Object.values(walletsList),
-    initializeWalletConnect: (walletConnectChainId = 1) => {
+    initializeWalletConnect: async (walletConnectChainId = 1) => {
       // Initialize WalletConnect provider
-      bewareExceptions(() => EthereumProvider.init(ethereumProviderOptions ?? {
+      await bewareExceptions(() => EthereumProvider.init(ethereumProviderOptions ?? {
         chains: [walletConnectChainId],
         showQrModal: true,
         projectId: wcProjectId,
