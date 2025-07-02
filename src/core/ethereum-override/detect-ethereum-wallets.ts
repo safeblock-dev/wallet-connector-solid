@@ -18,7 +18,6 @@ interface DetectEthereumWalletsOptions {
   onUpdate?: () => any
   descriptors?: UnifiedWalletDescriptor[]
   ethereumProviderOptions?: EthereumProviderOptions
-  walletConnectChainId?: number
   ignoreListRef?: IgnoreListRef
 }
 
@@ -53,41 +52,6 @@ export default function detectEthereumWallets(options: DetectEthereumWalletsOpti
         onUpdate
       }))
     }, false)
-  })
-
-  // Initialize WalletConnect provider
-  bewareExceptions(() => EthereumProvider.init(ethereumProviderOptions ?? {
-    chains: [options.walletConnectChainId || 1],
-    showQrModal: true,
-    projectId: wcProjectId,
-    qrModalOptions: {
-      enableExplorer: Boolean(navigator.maxTouchPoints || "ontouchstart" in document.documentElement) ?? false,
-      explorerExcludedWalletIds: "ALL",
-      explorerRecommendedWalletIds: walletConfig.map(w => w.id)
-    }
-  }))?.then(provider => {
-    if (provider.namespace in walletsList) return
-    const unifiedWallet = createUnifiedWallet({
-      wallet: {
-        provider: (network) => new BrowserProvider(provider, undefined, { staticNetwork: network }),
-        walletConnectProvider: provider,
-        info: {
-          name: "WalletConnect",
-          icon: "https://assets.safeblock.com/wallets/walletconnect.png",
-          uuid: provider.namespace
-        },
-        supports: {
-          requestPermissions: false,
-          disconnectMethod: true
-        },
-        type: WalletType.Ethereum
-      },
-      ignoreListRef: options.ignoreListRef,
-      onUpdate,
-      onDisconnect: () => provider.disconnect()
-    })
-
-    setWalletsList(provider.namespace, unifiedWallet)
   })
 
   // eip6963 announce provider event handler
@@ -128,5 +92,44 @@ export default function detectEthereumWallets(options: DetectEthereumWalletsOpti
   window.addEventListener("eip6963:announceProvider", handleAnnounceEvent)
   window.dispatchEvent(new Event("eip6963:requestProvider"))
 
-  return () => Object.values(walletsList)
+  return {
+    unifiedWallets: () => Object.values(walletsList),
+    initializeWalletConnect: (walletConnectChainId = 1) => {
+      // Initialize WalletConnect provider
+      bewareExceptions(() => EthereumProvider.init(ethereumProviderOptions ?? {
+        chains: [walletConnectChainId],
+        showQrModal: true,
+        projectId: wcProjectId,
+        qrModalOptions: {
+          enableExplorer: Boolean(navigator.maxTouchPoints || "ontouchstart" in document.documentElement) ?? false,
+          explorerExcludedWalletIds: "ALL",
+          explorerRecommendedWalletIds: walletConfig.map(w => w.id)
+        }
+      }))?.then(provider => {
+        if (provider.namespace in walletsList) return
+
+        const unifiedWallet = createUnifiedWallet({
+          wallet: {
+            provider: (network) => new BrowserProvider(provider, undefined, { staticNetwork: network }),
+            walletConnectProvider: provider,
+            info: {
+              name: "WalletConnect",
+              icon: "https://assets.safeblock.com/wallets/walletconnect.png",
+              uuid: provider.namespace
+            },
+            supports: {
+              requestPermissions: false,
+              disconnectMethod: true
+            },
+            type: WalletType.Ethereum
+          },
+          ignoreListRef: options.ignoreListRef,
+          onUpdate,
+          onDisconnect: () => provider.disconnect()
+        })
+
+        setWalletsList(provider.namespace, unifiedWallet)
+      })
+    }
+  }
 }
